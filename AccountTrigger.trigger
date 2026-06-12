@@ -4,7 +4,20 @@ trigger AccountTrigger on Account
 	 after insert,  after update,  after delete,  after undelete
 )
 {
-	if (Org_Specific_Setting__mdt.getInstance('Run_All_Triggers')?.Value__c == true) // The Safe Navigation Operator (?.)
+	// if (Org_Specific_Setting__mdt.getInstance('Run_All_Triggers')?.Value__c == true) // The Safe Navigation Operator (?.)
+	/*
+	 * Using the Safe Navigation Operator (?.):
+	 * If the Custom Setting returns a record, the Safe Navigation Operator (?.)
+	 * gets the record's Run_All_Triggers__c field value (true/false).
+	 * If the Custom Setting doesn't return a record, i.e., even at the least,
+	 * does't have a "Default Organization Level Value" set,
+	 * the Safe Navigation Operator (?.) return nulls.
+	 * 
+	 * Using the Operator (??):
+	 * If the expression returns a true or a false, the (??) operator takes it.
+	 * Else if the expression returns a null, the ?? operator returns true.
+	 */
+	if (Org_Specific_Custom_Setting__c.getInstance()?.Run_All_Triggers__c ?? true)
 	{
 		TriggerHandler handler = new AccountTriggerHandler(Trigger.isExecuting, Trigger.size);
 		switch on Trigger.operationType
